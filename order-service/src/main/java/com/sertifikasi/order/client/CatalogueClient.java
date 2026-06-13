@@ -23,13 +23,13 @@ public class CatalogueClient {
         }
     }
     
-    public void updateProductStock(String code, Integer quantity) {
-        String url = CATALOGUE_SERVICE_URL + "/" + code;
-        Map<String, Object> request = Map.of("stock", quantity);
+    public void reduceProductStock(String code, Integer quantity) {
+        String url = CATALOGUE_SERVICE_URL + "/" + code + "/reduce-stock";
+        Map<String, Object> request = Map.of("quantity", quantity);
         try {
             restTemplate.patchForObject(url, request, String.class);
         } catch (Exception e) {
-            throw new RuntimeException("Gagal mengupdate stok produk " + code);
+            throw new RuntimeException("Gagal mengurangi stok produk " + code);
         }
     }
     

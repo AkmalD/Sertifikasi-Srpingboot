@@ -35,6 +35,10 @@ public class ProductService {
         if (request.getCode() == null || request.getName() == null || request.getPrice() == null || request.getStock() == null) {
             throw new BadRequestException("Request tidak boleh ada yang null");
         }
+
+        if (request.getCode() != null && repository.findByCode(request.getCode()).isPresent()) {
+            throw new BadRequestException("Product dengan code " + request.getCode() + " sudah ada");
+        }
         
         Product product = new Product();
 
@@ -78,6 +82,23 @@ public class ProductService {
             product.setStock(request.getStock());
         }
         
+        Product updatedProduct = repository.save(product);
+        return mapToResponse(updatedProduct);
+    }
+
+    public ProductResponse reduceProductStock(String code, Integer quantity) {
+        Product product = repository.findByCode(code)
+            .orElseThrow(() -> new RuntimeException("Product dengan code " + code + " tidak ditemukan"));
+        
+        if (quantity == null || quantity <= 0) {
+            throw new BadRequestException("Quantity harus lebih dari 0");
+        }
+        
+        if (product.getStock() < quantity) {
+            throw new BadRequestException("Stok tidak cukup. Stok saat ini: " + product.getStock());
+        }
+        
+        product.setStock(product.getStock() - quantity);  // ✅ KURANGI stok
         Product updatedProduct = repository.save(product);
         return mapToResponse(updatedProduct);
     }

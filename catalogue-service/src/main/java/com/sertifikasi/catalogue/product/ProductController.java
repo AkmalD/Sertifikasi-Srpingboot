@@ -4,6 +4,7 @@ import com.sertifikasi.catalogue.product.dto.ProductRequest;
 import com.sertifikasi.catalogue.product.dto.ProductResponse;
 import com.sertifikasi.catalogue.product.dto.UpdateProductRequest;
 import com.sertifikasi.catalogue.product.dto.UpdateStatusRequest;
+import com.sertifikasi.catalogue.product.dto.ReduceStockRequest;
 
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -42,6 +43,11 @@ public class ProductController {
     @PatchMapping("/{code}")
     public ProductResponse updateProductStock(@PathVariable String code, @RequestBody UpdateProductRequest request) {
         return service.updateProductStock(code, request);
+    }
+
+    @PatchMapping("/{code}/reduce-stock")
+    public ProductResponse reduceProductStock(@PathVariable String code, @RequestBody ReduceStockRequest request) {
+        return service.reduceProductStock(code, request.getQuantity());
     }
 
     @PatchMapping("/{code}/status")

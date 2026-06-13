@@ -85,7 +85,7 @@ public class OrderService {
         
         // Kurangi stok untuk setiap item
         for (OrderItem item : order.getItems()) {
-            catalogueClient.updateProductStock(item.getProductCode(), item.getQuantity());
+            catalogueClient.reduceProductStock(item.getProductCode(), item.getQuantity());  // ← Gunakan yang baru
         }
         
         order.setStatus(OrderStatus.PAID);
