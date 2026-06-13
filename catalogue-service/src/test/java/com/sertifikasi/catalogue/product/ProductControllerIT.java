@@ -71,9 +71,9 @@ public class ProductControllerIT {
     @Test
     void testGetProductNotFound() throws Exception {
         mockMvc.perform(get("/api/products/NOTFOUND"))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.error").value("Bad Request"));
-    }
+        .andExpect(status().isNotFound()) 
+        .andExpect(jsonPath("$.error").value("Not Found")); 
+}
     
     @Test
     void testUpdateProductStatusIntegration() throws Exception {
@@ -105,8 +105,9 @@ public class ProductControllerIT {
                 .andExpect(status().isOk());
         
         // Verify deleted
+
         mockMvc.perform(get("/api/products/TEST001"))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isNotFound());
     }
     
     @Test
