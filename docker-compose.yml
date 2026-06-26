@@ -1,6 +1,5 @@
 services:
 
-  # ── PostgreSQL ──────────────────────────────────────────────────────────────
   postgres:
     image: postgres:16-alpine
     container_name: postgres
@@ -9,7 +8,6 @@ services:
       POSTGRES_PASSWORD: postgres
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      # Script ini dijalankan otomatis saat container pertama kali dibuat
       - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
     ports:
       - "5432:5432"
@@ -19,7 +17,6 @@ services:
       timeout: 5s
       retries: 5
 
-  # ── Catalogue Service ───────────────────────────────────────────────────────
   catalogue-service:
     build:
       context: ./catalogue-service
@@ -34,8 +31,13 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8081/actuator/health | grep -q '\"status\":\"UP\"' || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 30s
 
-  # ── Order Service ───────────────────────────────────────────────────────────
   order-service:
     build:
       context: ./order-service
@@ -45,30 +47,38 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/order_db
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: postgres
-      # Catalogue diakses lewat api-gateway (nama container), bukan localhost
       CATALOGUE_SERVICE_URL: http://api-gateway:8080/api/products
     ports:
       - "8082:8082"
     depends_on:
       postgres:
         condition: service_healthy
-      api-gateway:
-        condition: service_started
+      catalogue-service:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8082/actuator/health | grep -q '\"status\":\"UP\"' || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 30s
 
-  # ── API Gateway ─────────────────────────────────────────────────────────────
   api-gateway:
     build:
       context: ./api-gateway
       dockerfile: Dockerfile
     container_name: api-gateway
     environment:
-      # Override routing URL supaya mengarah ke nama container, bukan localhost
+      SPRING_CLOUD_GATEWAY_SERVER_WEBFLUX_ROUTES_0_ID: catalogue-service
       SPRING_CLOUD_GATEWAY_SERVER_WEBFLUX_ROUTES_0_URI: http://catalogue-service:8081
+      SPRING_CLOUD_GATEWAY_SERVER_WEBFLUX_ROUTES_0_PREDICATES_0: Path=/api/products/**
+      SPRING_CLOUD_GATEWAY_SERVER_WEBFLUX_ROUTES_1_ID: order-service
       SPRING_CLOUD_GATEWAY_SERVER_WEBFLUX_ROUTES_1_URI: http://order-service:8082
+      SPRING_CLOUD_GATEWAY_SERVER_WEBFLUX_ROUTES_1_PREDICATES_0: Path=/api/orders/**
     ports:
       - "8080:8080"
     depends_on:
-      - catalogue-service
+      catalogue-service:
+        condition: service_healthy
 
 volumes:
   postgres_data:
