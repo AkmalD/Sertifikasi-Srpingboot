@@ -80,5 +80,4 @@ Tuliskan jika masih ada bagian yang belum dipahami.
 Contoh:
 
 1. Untuk masalah library dan sintaks saya belum terlalu mendalami, jadi masih pakai AI, tapi flownya sih sudah cukup paham, keterkaitan antar file itu kemana mana nya.
-2. Saya belum paham spring security sebenarnya, setelah dependency diinstal, saat saya mau create product atau order itu malah unauthorized, dan solusinya adalah permit.*, lalu apa fungsi security nya kalau permit all wkwk.
-3. 
+2. Saya belum paham spring security sebenarnya, setelah dependency diinstal, saat saya mau create product atau order itu malah unauthorized, dan solusinya adalah permit.*, lalu apa fungsi security nya kalau permit all.
