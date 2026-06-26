@@ -2,6 +2,7 @@ package com.sertifikasi.order.order;
 
 import com.sertifikasi.order.client.CatalogueClient;
 import com.sertifikasi.order.client.CatalogueClient.ProductDTO;
+import com.sertifikasi.order.exception.BadRequestException;
 import com.sertifikasi.order.order.dto.OrderItemRequest;
 import com.sertifikasi.order.order.dto.OrderRequest;
 import com.sertifikasi.order.order.dto.OrderResponse;
@@ -103,7 +104,7 @@ public class OrderService {
             .orElseThrow(() -> new RuntimeException("Order dengan code " + code + " tidak ditemukan"));
 
         if (!order.getStatus().equals(OrderStatus.PENDING)) {
-            throw new RuntimeException("Hanya order dengan status PENDING yang bisa dibayar");
+            throw new BadRequestException("Hanya order dengan status PENDING yang bisa dibayar");
         }
 
         order.setStatus(OrderStatus.PAID);
@@ -117,7 +118,7 @@ public class OrderService {
             .orElseThrow(() -> new RuntimeException("Order dengan code " + code + " tidak ditemukan"));
 
         if (!order.getStatus().equals(OrderStatus.PENDING)) {
-            throw new RuntimeException("Hanya order dengan status PENDING yang bisa dibatalkan");
+            throw new BadRequestException("Hanya order dengan status PENDING yang bisa dibatalkan");
         }
 
         Map<String, Integer> quantitiesByCode = aggregateOrderQuantities(order.getItems());
@@ -136,47 +137,47 @@ public class OrderService {
 
     private void validateOrderRequest(OrderRequest request) {
         if (request == null) {
-            throw new RuntimeException("Request order tidak boleh kosong");
+            throw new BadRequestException("Request order tidak boleh kosong");
         }
 
         if (request.getCustomerName() == null || request.getCustomerName().isBlank()) {
-            throw new RuntimeException("Customer name wajib diisi");
+            throw new BadRequestException("Customer name wajib diisi");
         }
 
         if (request.getCustomerEmail() == null || !EMAIL_PATTERN.matcher(request.getCustomerEmail().trim()).matches()) {
-            throw new RuntimeException("Email customer tidak valid");
+            throw new BadRequestException("Email customer tidak valid");
         }
 
         if (request.getItems() == null || request.getItems().isEmpty()) {
-            throw new RuntimeException("Order harus memiliki minimal 1 item");
+            throw new BadRequestException("Order harus memiliki minimal 1 item");
         }
     }
 
     private void validateItemRequest(OrderItemRequest itemRequest) {
         if (itemRequest == null) {
-            throw new RuntimeException("Item order tidak boleh kosong");
+            throw new BadRequestException("Item order tidak boleh kosong");
         }
 
         if (itemRequest.getProductCode() == null || itemRequest.getProductCode().isBlank()) {
-            throw new RuntimeException("Product code wajib diisi");
+            throw new BadRequestException("Product code wajib diisi");
         }
 
         if (itemRequest.getQuantity() == null || itemRequest.getQuantity() < 1) {
-            throw new RuntimeException("Quantity minimal 1");
+            throw new BadRequestException("Quantity minimal 1");
         }
     }
 
     private void validateProduct(ProductDTO product, String requestedCode) {
         if (product == null) {
-            throw new RuntimeException("Produk dengan code " + requestedCode + " tidak ditemukan");
+            throw new BadRequestException("Produk dengan code " + requestedCode + " tidak ditemukan");
         }
 
         if (product.getCode() == null || product.getName() == null || product.getPrice() == null || product.getStock() == null) {
-            throw new RuntimeException("Data produk " + requestedCode + " tidak lengkap");
+            throw new BadRequestException("Data produk " + requestedCode + " tidak lengkap");
         }
 
         if (!"ACTIVE".equals(product.getStatus())) {
-            throw new RuntimeException("Product " + product.getCode() + " tidak tersedia (status: " + product.getStatus() + ")");
+            throw new BadRequestException("Product " + product.getCode() + " tidak tersedia (status: " + product.getStatus() + ")");
         }
     }
 
@@ -184,7 +185,7 @@ public class OrderService {
         for (var quantityEntry : quantitiesByCode.entrySet()) {
             ProductDTO product = productsByCode.get(quantityEntry.getKey());
             if (product.getStock() < quantityEntry.getValue()) {
-                throw new RuntimeException("Stok produk " + product.getCode() + " tidak cukup. Stok saat ini: " + product.getStock());
+                throw new BadRequestException("Stok produk " + product.getCode() + " tidak cukup. Stok saat ini: " + product.getStock());
             }
         }
     }
