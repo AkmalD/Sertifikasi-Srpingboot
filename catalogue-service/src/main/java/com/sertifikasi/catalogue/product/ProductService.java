@@ -6,6 +6,7 @@ import com.sertifikasi.catalogue.product.dto.ProductResponse;
 import com.sertifikasi.catalogue.product.dto.UpdateProductRequest;
 import com.sertifikasi.catalogue.product.dto.UpdateStatusRequest;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,22 +33,21 @@ public class ProductService {
     }
     
     public ProductResponse createProduct(ProductRequest request) {
-        if (request.getCode() == null || request.getName() == null || request.getPrice() == null || request.getStock() == null) {
-            throw new BadRequestException("Request tidak boleh ada yang null");
-        }
+        validateCreateRequest(request);
 
-        if (request.getCode() != null && repository.findByCode(request.getCode()).isPresent()) {
+        String code = request.getCode().trim();
+        if (repository.findByCode(code).isPresent()) {
             throw new BadRequestException("Product dengan code " + request.getCode() + " sudah ada");
         }
         
         Product product = new Product();
 
-        product.setCode(request.getCode());
-        product.setName(request.getName());
+        product.setCode(code);
+        product.setName(request.getName().trim());
         product.setPrice(request.getPrice());
         product.setStock(request.getStock());
         
-        Product savedProduct = repository.save(product);
+        Product savedProduct = saveProduct(product);
         return mapToResponse(savedProduct);
     }
     
@@ -55,34 +55,39 @@ public class ProductService {
         Product product = repository.findByCode(code)
             .orElseThrow(() -> new RuntimeException("Product dengan code " + code + " tidak ditemukan"));
         
-        if (request.getName() == null || request.getPrice() == null || request.getStock() == null) {
-            throw new BadRequestException("Request tidak boleh ada yang null");
-        }
+        validateUpdateRequest(request);
 
-        product.setName(request.getName());
+        product.setName(request.getName().trim());
         product.setPrice(request.getPrice());
         product.setStock(request.getStock());
         
-        Product updatedProduct = repository.save(product);
+        Product updatedProduct = saveProduct(product);
         return mapToResponse(updatedProduct);
     }
     
     public ProductResponse updateProductStock(String code, UpdateProductRequest request) {
         Product product = repository.findByCode(code)
             .orElseThrow(() -> new RuntimeException("Product dengan code " + code + " tidak ditemukan"));
+
+        if (request == null) {
+            throw new BadRequestException("Request tidak boleh kosong");
+        }
         
         // Update hanya field yang dikirim (partial update)
         if (request.getName() != null) {
-            product.setName(request.getName());
+            validateName(request.getName());
+            product.setName(request.getName().trim());
         }
         if (request.getPrice() != null) {
+            validatePrice(request.getPrice());
             product.setPrice(request.getPrice());
         }
         if (request.getStock() != null) {
+            validateStock(request.getStock());
             product.setStock(request.getStock());
         }
         
-        Product updatedProduct = repository.save(product);
+        Product updatedProduct = saveProduct(product);
         return mapToResponse(updatedProduct);
     }
 
@@ -99,7 +104,7 @@ public class ProductService {
         }
         
         product.setStock(product.getStock() - quantity);  // ✅ KURANGI stok
-        Product updatedProduct = repository.save(product);
+        Product updatedProduct = saveProduct(product);
         return mapToResponse(updatedProduct);
     }
 
@@ -107,12 +112,16 @@ public class ProductService {
         Product product = repository.findByCode(code)
             .orElseThrow(() -> new RuntimeException("Product dengan code " + code + " tidak ditemukan"));
         
+        if (request == null) {
+            throw new BadRequestException("Request tidak boleh kosong");
+        }
+
         if (request.getStatus() == null) {
             throw new BadRequestException("Status tidak boleh kosong");
         }
         
         product.setStatus(request.getStatus());
-        Product updatedProduct = repository.save(product);
+        Product updatedProduct = saveProduct(product);
         return mapToResponse(updatedProduct);
     }
     
@@ -121,6 +130,59 @@ public class ProductService {
             .orElseThrow(() -> new RuntimeException("Product dengan code " + code + " tidak ditemukan"));
         
         repository.delete(product);
+    }
+
+    private void validateCreateRequest(ProductRequest request) {
+        if (request == null) {
+            throw new BadRequestException("Request tidak boleh kosong");
+        }
+
+        validateCode(request.getCode());
+        validateName(request.getName());
+        validatePrice(request.getPrice());
+        validateStock(request.getStock());
+    }
+
+    private void validateUpdateRequest(ProductRequest request) {
+        if (request == null) {
+            throw new BadRequestException("Request tidak boleh kosong");
+        }
+
+        validateName(request.getName());
+        validatePrice(request.getPrice());
+        validateStock(request.getStock());
+    }
+
+    private void validateCode(String code) {
+        if (code == null || code.isBlank()) {
+            throw new BadRequestException("Code wajib diisi");
+        }
+    }
+
+    private void validateName(String name) {
+        if (name == null || name.isBlank()) {
+            throw new BadRequestException("Name wajib diisi");
+        }
+    }
+
+    private void validatePrice(Double price) {
+        if (price == null || !Double.isFinite(price) || price <= 0) {
+            throw new BadRequestException("Price harus lebih dari 0");
+        }
+    }
+
+    private void validateStock(Integer stock) {
+        if (stock == null || stock < 0) {
+            throw new BadRequestException("Stock minimal 0");
+        }
+    }
+
+    private Product saveProduct(Product product) {
+        try {
+            return repository.save(product);
+        } catch (DataIntegrityViolationException ex) {
+            throw new BadRequestException("Product dengan code " + product.getCode() + " sudah ada");
+        }
     }
     
     private ProductResponse mapToResponse(Product product) {

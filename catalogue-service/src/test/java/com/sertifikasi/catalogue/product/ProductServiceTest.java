@@ -3,11 +3,14 @@ package com.sertifikasi.catalogue.product;
 import com.sertifikasi.catalogue.exception.BadRequestException;
 import com.sertifikasi.catalogue.product.dto.ProductRequest;
 import com.sertifikasi.catalogue.product.dto.ProductResponse;
+import com.sertifikasi.catalogue.product.dto.UpdateProductRequest;
 import com.sertifikasi.catalogue.product.dto.UpdateStatusRequest;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+
+import org.springframework.dao.DataIntegrityViolationException;
 
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -50,6 +53,7 @@ public class ProductServiceTest {
     
     @Test
     void testCreateProductSuccess() {
+        when(repository.findByCode("NSPD")).thenReturn(Optional.empty());
         when(repository.save(any(Product.class))).thenReturn(product);
         
         ProductResponse response = service.createProduct(productRequest);
@@ -68,6 +72,102 @@ public class ProductServiceTest {
         assertThrows(BadRequestException.class, () -> {
             service.createProduct(productRequest);
         });
+    }
+
+    @Test
+    void testCreateProductWithDuplicateCodeFails() {
+        when(repository.findByCode("NSPD")).thenReturn(Optional.of(product));
+        
+        assertThrows(BadRequestException.class, () -> {
+            service.createProduct(productRequest);
+        });
+        verify(repository, never()).save(any(Product.class));
+    }
+
+    @Test
+    void testCreateProductWithDatabaseDuplicateFails() {
+        when(repository.findByCode("NSPD")).thenReturn(Optional.empty());
+        when(repository.save(any(Product.class))).thenThrow(new DataIntegrityViolationException("duplicate code"));
+        
+        assertThrows(BadRequestException.class, () -> {
+            service.createProduct(productRequest);
+        });
+    }
+
+    @Test
+    void testCreateProductWithBlankNameFails() {
+        productRequest.setName("   ");
+        
+        assertThrows(BadRequestException.class, () -> {
+            service.createProduct(productRequest);
+        });
+        verify(repository, never()).save(any(Product.class));
+    }
+
+    @Test
+    void testCreateProductWithZeroPriceFails() {
+        productRequest.setPrice(0.0);
+        
+        assertThrows(BadRequestException.class, () -> {
+            service.createProduct(productRequest);
+        });
+        verify(repository, never()).save(any(Product.class));
+    }
+
+    @Test
+    void testCreateProductWithNegativeStockFails() {
+        productRequest.setStock(-1);
+        
+        assertThrows(BadRequestException.class, () -> {
+            service.createProduct(productRequest);
+        });
+        verify(repository, never()).save(any(Product.class));
+    }
+
+    @Test
+    void testUpdateProductWithBlankNameFails() {
+        productRequest.setName(" ");
+        when(repository.findByCode("NSPD")).thenReturn(Optional.of(product));
+        
+        assertThrows(BadRequestException.class, () -> {
+            service.updateProduct("NSPD", productRequest);
+        });
+        verify(repository, never()).save(any(Product.class));
+    }
+
+    @Test
+    void testUpdateProductWithNegativePriceFails() {
+        productRequest.setPrice(-1000.0);
+        when(repository.findByCode("NSPD")).thenReturn(Optional.of(product));
+        
+        assertThrows(BadRequestException.class, () -> {
+            service.updateProduct("NSPD", productRequest);
+        });
+        verify(repository, never()).save(any(Product.class));
+    }
+
+    @Test
+    void testPartialUpdateProductWithZeroPriceFails() {
+        UpdateProductRequest request = new UpdateProductRequest();
+        request.setPrice(0.0);
+        when(repository.findByCode("NSPD")).thenReturn(Optional.of(product));
+        
+        assertThrows(BadRequestException.class, () -> {
+            service.updateProductStock("NSPD", request);
+        });
+        verify(repository, never()).save(any(Product.class));
+    }
+
+    @Test
+    void testPartialUpdateProductWithNegativeStockFails() {
+        UpdateProductRequest request = new UpdateProductRequest();
+        request.setStock(-1);
+        when(repository.findByCode("NSPD")).thenReturn(Optional.of(product));
+        
+        assertThrows(BadRequestException.class, () -> {
+            service.updateProductStock("NSPD", request);
+        });
+        verify(repository, never()).save(any(Product.class));
     }
     
     @Test
