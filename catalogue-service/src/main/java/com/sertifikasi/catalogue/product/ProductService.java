@@ -108,6 +108,19 @@ public class ProductService {
         return mapToResponse(updatedProduct);
     }
 
+    public ProductResponse restoreProductStock(String code, Integer quantity) {
+        Product product = repository.findByCode(code)
+            .orElseThrow(() -> new RuntimeException("Product dengan code " + code + " tidak ditemukan"));
+
+        if (quantity == null || quantity <= 0) {
+            throw new BadRequestException("Quantity harus lebih dari 0");
+        }
+
+        product.setStock(product.getStock() + quantity);
+        Product updatedProduct = saveProduct(product);
+        return mapToResponse(updatedProduct);
+    }
+
     public ProductResponse updateProductStatus(String code, UpdateStatusRequest request) {
         Product product = repository.findByCode(code)
             .orElseThrow(() -> new RuntimeException("Product dengan code " + code + " tidak ditemukan"));

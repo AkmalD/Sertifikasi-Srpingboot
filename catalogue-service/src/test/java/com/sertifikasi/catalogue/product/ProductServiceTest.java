@@ -169,6 +169,26 @@ public class ProductServiceTest {
         });
         verify(repository, never()).save(any(Product.class));
     }
+
+    @Test
+    void testRestoreProductStockSuccess() {
+        when(repository.findByCode("NSPD")).thenReturn(Optional.of(product));
+        when(repository.save(any(Product.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        ProductResponse response = service.restoreProductStock("NSPD", 10);
+
+        assertEquals(110, response.getStock());
+    }
+
+    @Test
+    void testRestoreProductStockWithInvalidQuantityFails() {
+        when(repository.findByCode("NSPD")).thenReturn(Optional.of(product));
+
+        assertThrows(BadRequestException.class, () -> {
+            service.restoreProductStock("NSPD", 0);
+        });
+        verify(repository, never()).save(any(Product.class));
+    }
     
     @Test
     void testGetProductByCodeSuccess() {

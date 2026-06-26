@@ -9,5 +9,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrderRequest {
+    private String customerName;
+    private String customerEmail;
     private List<OrderItemRequest> items;
 }

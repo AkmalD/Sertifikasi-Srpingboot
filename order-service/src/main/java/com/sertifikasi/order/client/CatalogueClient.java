@@ -32,6 +32,16 @@ public class CatalogueClient {
             throw new RuntimeException("Gagal mengurangi stok produk " + code);
         }
     }
+
+    public void restoreProductStock(String code, Integer quantity) {
+        String url = CATALOGUE_SERVICE_URL + "/" + code + "/restore-stock";
+        Map<String, Object> request = Map.of("quantity", quantity);
+        try {
+            restTemplate.patchForObject(url, request, String.class);
+        } catch (Exception e) {
+            throw new RuntimeException("Gagal mengembalikan stok produk " + code);
+        }
+    }
     
     public static class ProductDTO {
         public Long id;

@@ -19,6 +19,10 @@ public class Order {
     private Long id;
     
     private String orderCode;
+
+    private String customerName;
+
+    private String customerEmail;
     
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
