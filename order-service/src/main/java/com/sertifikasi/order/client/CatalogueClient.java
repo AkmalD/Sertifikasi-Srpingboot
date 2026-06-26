@@ -1,5 +1,6 @@
 package com.sertifikasi.order.client;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import java.util.Map;
@@ -8,14 +9,17 @@ import java.util.Map;
 public class CatalogueClient {
     
     private final RestTemplate restTemplate;
-    private static final String CATALOGUE_SERVICE_URL = "http://localhost:8080/api/products";  // ← UBAH KE 8080
-    
-    public CatalogueClient(RestTemplate restTemplate) {
+    private final String catalogueServiceUrl;
+
+    public CatalogueClient(
+            RestTemplate restTemplate,
+            @Value("${catalogue.service.url:http://localhost:8080/api/products}") String catalogueServiceUrl) {
         this.restTemplate = restTemplate;
+        this.catalogueServiceUrl = catalogueServiceUrl;
     }
     
     public ProductDTO getProductByCode(String code) {
-        String url = CATALOGUE_SERVICE_URL + "/" + code;
+        String url = catalogueServiceUrl + "/" + code;
         try {
             return restTemplate.getForObject(url, ProductDTO.class);
         } catch (Exception e) {
@@ -24,7 +28,7 @@ public class CatalogueClient {
     }
     
     public void reduceProductStock(String code, Integer quantity) {
-        String url = CATALOGUE_SERVICE_URL + "/" + code + "/reduce-stock";
+        String url = catalogueServiceUrl + "/" + code + "/reduce-stock";
         Map<String, Object> request = Map.of("quantity", quantity);
         try {
             restTemplate.patchForObject(url, request, String.class);
@@ -34,7 +38,7 @@ public class CatalogueClient {
     }
 
     public void restoreProductStock(String code, Integer quantity) {
-        String url = CATALOGUE_SERVICE_URL + "/" + code + "/restore-stock";
+        String url = catalogueServiceUrl + "/" + code + "/restore-stock";
         Map<String, Object> request = Map.of("quantity", quantity);
         try {
             restTemplate.patchForObject(url, request, String.class);
