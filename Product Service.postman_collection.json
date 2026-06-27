@@ -1,0 +1,345 @@
+{
+  "info": {
+    "_postman_id": "6dfb38b2-e8b2-4938-85a5-f11803b42b1c",
+    "name": "Product Service",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "54155228",
+    "_collection_link": "https://go.postman.co/collection/54155228-6dfb38b2-e8b2-4938-85a5-f11803b42b1c?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Create Product",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{supabase_service_role_api_key_16yd}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"code\": \"BSO\",\r\n    \"name\": \"Baso\",\r\n    \"price\": 15000,\r\n    \"stock\": 10\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/products",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "products"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get All Product",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{json_web_token_16yd}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/api/products",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "products"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Product By Code",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "auth": {
+          "type": "basic",
+          "basic": [
+            {
+              "key": "password",
+              "value": "{{auth_password_0j0g}}",
+              "type": "string"
+            },
+            {
+              "key": "username",
+              "value": "user",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"name\": \"Batagor\",\r\n    \"price\": 5000,\r\n    \"stock\": 10\r\n}"
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/products/BTGR",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "products",
+            "BTGR"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Put Product",
+      "request": {
+        "auth": {
+          "type": "basic",
+          "basic": [
+            {
+              "key": "password",
+              "value": "{{auth_password_0j0g}}",
+              "type": "string"
+            },
+            {
+              "key": "username",
+              "value": "user",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "PUT",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"name\": \"Batagor\",\r\n    \"price\": 5000,\r\n    \"stock\": 10\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/products/BTGR",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "products",
+            "BTGR"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Partial Update Product",
+      "request": {
+        "auth": {
+          "type": "basic",
+          "basic": [
+            {
+              "key": "password",
+              "value": "{{auth_password_0j0g}}",
+              "type": "string"
+            },
+            {
+              "key": "username",
+              "value": "user",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "PATCH",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"price\": 7000\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/products/BTGR",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "products",
+            "BTGR"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Delete Product",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/api/products/NSPD",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "products",
+            "NSPD"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Update Status Product",
+      "request": {
+        "auth": {
+          "type": "basic",
+          "basic": [
+            {
+              "key": "password",
+              "value": "{{auth_password_0j0g}}",
+              "type": "string"
+            },
+            {
+              "key": "username",
+              "value": "user",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "PATCH",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\"status\": \"ACTIVE\"}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/products/NSPD/status",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "products",
+            "NSPD",
+            "status"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Login",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/auth/login?username=admin&password=password",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "auth",
+            "login"
+          ],
+          "query": [
+            {
+              "key": "username",
+              "value": "admin",
+              "type": "text"
+            },
+            {
+              "key": "password",
+              "value": "password",
+              "type": "text"
+            }
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "auth_password_1ef4",
+      "secret": true
+    },
+    {
+      "key": "auth_password_0j0g",
+      "secret": true
+    },
+    {
+      "key": "supabase_service_role_api_key_16yd",
+      "secret": true
+    },
+    {
+      "key": "json_web_token_16yd",
+      "secret": true
+    }
+  ]
+}

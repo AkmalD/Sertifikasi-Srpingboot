@@ -1,0 +1,178 @@
+{
+  "info": {
+    "_postman_id": "c3b50c15-3e5e-4422-820a-60f2954c36d9",
+    "name": "Order Service",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "54155228",
+    "_collection_link": "https://go.postman.co/collection/54155228-c3b50c15-3e5e-4422-820a-60f2954c36d9?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Get All Order",
+      "request": {
+        "auth": {
+          "type": "basic",
+          "basic": [
+            {
+              "key": "password",
+              "value": "{{auth_password_0hwj}}",
+              "type": "string"
+            },
+            {
+              "key": "username",
+              "value": "user",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/api/orders",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "orders"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Get Order By Code",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/api/orders/ORD-77C8A8ED",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "orders",
+            "ORD-77C8A8ED"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Create Order",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{supabase_service_role_api_key_16yd}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"customerName\": \"John Doe\",\r\n  \"customerEmail\": \"johndoew@example.com\",\r\n  \"items\": [\r\n    {\r\n      \"productCode\": \"BSO\",\r\n      \"quantity\": 3\r\n    }\r\n  ]\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "http://localhost:8080/api/orders",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "orders"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Cancel Order",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{json_web_token_16yd}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/api/orders/ORD-064151C9/cancel",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "orders",
+            "ORD-064151C9",
+            "cancel"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Pay Order",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:8080/api/orders/ORD-4B4B06F2/pay",
+          "protocol": "http",
+          "host": [
+            "localhost"
+          ],
+          "port": "8080",
+          "path": [
+            "api",
+            "orders",
+            "ORD-4B4B06F2",
+            "pay"
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "auth_password_0hwj",
+      "secret": true
+    },
+    {
+      "key": "auth_password_0f13",
+      "secret": true
+    },
+    {
+      "key": "json_web_token_16yd",
+      "secret": true
+    },
+    {
+      "key": "supabase_service_role_api_key_16yd",
+      "secret": true
+    }
+  ]
+}
