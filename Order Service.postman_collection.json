@@ -11,16 +11,11 @@
       "name": "Get All Order",
       "request": {
         "auth": {
-          "type": "basic",
-          "basic": [
+          "type": "bearer",
+          "bearer": [
             {
-              "key": "password",
-              "value": "{{auth_password_0hwj}}",
-              "type": "string"
-            },
-            {
-              "key": "username",
-              "value": "user",
+              "key": "token",
+              "value": "{{auth_secret_0i2d}}",
               "type": "string"
             }
           ]
@@ -45,6 +40,16 @@
     {
       "name": "Get Order By Code",
       "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{auth_secret_0i2d}}",
+              "type": "string"
+            }
+          ]
+        },
         "method": "GET",
         "header": [],
         "url": {
@@ -137,6 +142,16 @@
     {
       "name": "Pay Order",
       "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{json_web_token_0i2d}}",
+              "type": "string"
+            }
+          ]
+        },
         "method": "POST",
         "header": [],
         "url": {
@@ -172,6 +187,14 @@
     },
     {
       "key": "supabase_service_role_api_key_16yd",
+      "secret": true
+    },
+    {
+      "key": "auth_secret_0i2d",
+      "secret": true
+    },
+    {
+      "key": "json_web_token_0i2d",
       "secret": true
     }
   ]
