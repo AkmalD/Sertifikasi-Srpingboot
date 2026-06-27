@@ -4,12 +4,10 @@ Isi file ini jika menggunakan AI secara signifikan selama pengerjaan.
 
 ## Tool AI yang Digunakan
 
-Contoh:
-
 - ChatGPT
 - GitHub Copilot (Claude Haiku 4.5)
 - Google AI
-- Lainnya:
+- Claude
 
 ## Bagian yang Dibantu AI
 
@@ -76,8 +74,6 @@ Tuliskan secara singkat apa yang sudah dipahami.
 ## Bagian yang Masih Membingungkan
 
 Tuliskan jika masih ada bagian yang belum dipahami.
-
-Contoh:
 
 1. Untuk masalah library dan sintaks saya belum terlalu mendalami, jadi masih pakai AI, tapi flownya sih sudah cukup paham, keterkaitan antar file itu kemana mana nya.
 2. Saya belum paham spring security sebenarnya, setelah dependency diinstal, saat saya mau create product atau order itu malah unauthorized, dan solusinya adalah permit.*, lalu apa fungsi security nya kalau permit all.
